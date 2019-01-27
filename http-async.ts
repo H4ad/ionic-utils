@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 //#region Class
 
 /**
- * Classe responsável por lidar com as chamadas assincronas nas APIs
+ * A classe que representa um serviço responsável por lidar com as chamadas assincronas em um Endpoint
  */
 @Injectable({
   providedIn: 'root'
@@ -46,7 +46,7 @@ export class HttpAsync {
    */
   public success<T>(result: T): AsyncResult<T> {
     return <AsyncResult<T>>{
-      result: result
+      success: result
     };
   }
 
@@ -72,7 +72,7 @@ export class HttpAsync {
    *
    * @param url Url para a requisição. Obs: Ele já é automaticamente combinado com a url base
    */
-  public async getAsync<T>(
+  public async get<T>(
     url:string
   ): Promise<AsyncResult<T>> {
     return await this.http.get<T>(this.baseUrl + url).toPromise()
@@ -93,7 +93,7 @@ export class HttpAsync {
    * @param url Url para a requisição. Obs: Ele já é automaticamente combinado com a url base
    * @param payload Informações a serem enviadas para o servidor
    */
-  public async postAsync<T>(
+  public async post<T>(
     url:string,
     payload: object
   ): Promise<AsyncResult<T>> {
@@ -115,7 +115,7 @@ export class HttpAsync {
    * @param url Url para a requisição. Obs: Ele já é automaticamente combinado com a url base
    * @param payload Informações a serem enviadas para o servidor
    */
-  public async putAsync<T>(
+  public async put<T>(
     url:string,
     payload: object
   ): Promise<AsyncResult<T>> {
@@ -137,7 +137,7 @@ export class HttpAsync {
    * @param url Url para a requisição. Obs: Ele já é automaticamente combinado com a url base
    * @param payload Informações a serem enviadas para o servidor
    */
-  public async deleteAsync<T>(
+  public async delete<T>(
     url:string
   ): Promise<AsyncResult<T>> {
     return await this.http.delete<T>(this.baseUrl + url).toPromise()
@@ -169,7 +169,7 @@ export interface AsyncResult<T> {
   /**
    * O resultado quando ocorre tudo certo
    */
-  result: T;
+  success: T;
 
   /**
    * O resultado quando dá algum problema

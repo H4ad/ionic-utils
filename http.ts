@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 //#region Class
 
 /**
- * Classe responsável por lidar com as chamadas na APIs
+ * A classe que representa um serviço responsável por lidar com as chamadas em um Endpoint
  */
 @Injectable({
   providedIn: 'root'
@@ -50,14 +50,14 @@ export class Http {
    * @param customOptions Opções customizadas para esta requisição
    */
   public post<T>(
-    url:string,
+    url: string,
     payload: object,
     handleSuccessful: (response: T) => void,
     handleError?: (response: HttpErrorResponse) => void,
     handleComplete?: () => void,
     customOptions?: object
   ): void {
-    this.http.post(this.baseUrl + url, payload, customOptions).subscribe(new BaseObserve<T>(handleSuccessful, handleError, handleComplete));
+    this.http.post(this.baseUrl + url, payload, customOptions).subscribe(new HttpObserver<T>(handleSuccessful, handleError, handleComplete));
   }
 
   /**
@@ -70,13 +70,13 @@ export class Http {
    * @param customOptions Opções customizadas para esta requisição
    */
   public get<T>(
-    url:string,
+    url: string,
     handleSuccessful: (response: T) => void,
     handleError?: (response: HttpErrorResponse) => void,
     handleComplete?: () => void,
     customOptions?: object
   ): void {
-    this.http.get(this.baseUrl + url, customOptions).subscribe(new BaseObserve<T>(handleSuccessful, handleError, handleComplete));
+    this.http.get(this.baseUrl + url, customOptions).subscribe(new HttpObserver<T>(handleSuccessful, handleError, handleComplete));
   }
 
   /**
@@ -90,14 +90,14 @@ export class Http {
    * @param customOptions Opções customizadas para esta requisição
    */
   public put<T>(
-    url:string,
+    url: string,
     payload: object,
     handleSuccessful: (response: T) => void,
     handleError?: (response: HttpErrorResponse) => void,
     handleComplete?: () => void,
     customOptions?: object
   ): void {
-    this.http.put(this.baseUrl + url, payload, customOptions).subscribe(new BaseObserve<T>(handleSuccessful, handleError, handleComplete));
+    this.http.put(this.baseUrl + url, payload, customOptions).subscribe(new HttpObserver<T>(handleSuccessful, handleError, handleComplete));
   }
 
   /**
@@ -116,7 +116,7 @@ export class Http {
     handleComplete?: () => void,
     customOptions?: object
   ): void {
-    this.http.delete(this.baseUrl + url, customOptions).subscribe(new BaseObserve<T>(handleSuccessful, handleError, handleComplete));
+    this.http.delete(this.baseUrl + url, customOptions).subscribe(new HttpObserver<T>(handleSuccessful, handleError, handleComplete));
   }
 
   //#endregion
@@ -125,9 +125,9 @@ export class Http {
 
 
 /**
- * Lida com as requisições
+ * A classe que representa o Observer que lida com as requisições Http
  */
-export class BaseObserve <TModel> implements Observer <TModel> {
+export class HttpObserver <TModel> implements Observer <TModel> {
 
   //#region Construtor
 
