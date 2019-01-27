@@ -49,6 +49,62 @@ constructor(
 
 Use esse serviço para realizar requisições assincronas em uma API.
 
+### Usando Factory
+
+Para facilitar o alguns processos de realizar log e autenticação, é possivel configurar algumas validações e ações ao ocorrer um erro. Para isso, você pode usar a propriedade `useFactory` para a criação do `provider` dessa forma:
+
+~~~~
+// app.module.ts
+import { HttpAsync } from '../lugar/do/serviço/http-async.ts';
+
+export function httpAsyncFactory = (http: HttpClient) => {
+    const httpAsync: HttpAsync = new HttpAsync(http);
+
+    httpAsync.setBeforeValidations(async () => {
+        // Aqui você pode realizar validações antes, como verificar se há internet.
+
+        // Depois retorne dessa forma caso de tudo certo.
+        return { error: undefined } as AsyncResult<any>;
+
+        // Ou dessa forma, caso dê errado:
+        // return { error: new HttpErrorResponse({ error: new Error("Não há internet"), status: 400 }); }
+    });
+
+    httpAsync.setLoadHeaders(async () => {
+        // Aqui você pode adicionar headers, como por exemplo os que precisam de informações no cache.
+
+        // Um exemplo, é buscar o token de autorização de uma API
+        const headers = new HttpHeaders("Authorization", "TOKEN");
+
+        // Após carregar tudo que quiser, retorne
+        return headers;
+    });
+
+    httpAsync.getOnAsyncResultError().subscribe((error: HttpErrorResponse) => {
+        // Aqui você pode fazer o log da forma que quiser do erro.
+        console.error(error);
+    });
+
+    // No final, retorne a instância criada
+    return httpAsync;
+}
+
+...
+
+@NgModule({
+  ...
+
+  providers: [
+    ...
+    { provide: HttpAsync, useFactory: httpAsyncFactory, deps: [HttpClient]}
+    // Todas as dependências que usar no construtor da 'Factory', coloque no array 'deps'
+    ...
+  ]
+  ...
+})
+export class AppModule { }
+~~~~
+
 ### Exemplos
 
 ~~~~

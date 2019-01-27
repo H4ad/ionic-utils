@@ -1,7 +1,8 @@
 //#region Imports
 
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Injectable, EventEmitter } from '@angular/core';
+import { Subject } from 'rxjs';
 
 //#endregion
 
@@ -23,28 +24,70 @@ export class HttpAsync {
    * @param http Modulo HTTP
    */
   constructor(
-    public http: HttpClient,
-  ) {}
+    private readonly http: HttpClient,
+  ) {
+    this.onAsyncResultError = new Subject<HttpErrorResponse>();
+  }
 
   //#endregion
 
-  //#region Properties
+  //#region Private Properties
 
   /**
    * Url base para realizar as chamadas
    */
   private readonly baseUrl: string = "API_ENDPOINT";
 
+  /**
+   * O evento emitido ao ocorrer um erro com a requisição
+   */
+  private readonly onAsyncResultError: Subject<HttpErrorResponse>;
+
+  /**
+   * O método que realiza validações antes de executar uma requisição
+   */
+  private beforeValidations: () => Promise<AsyncResult<any>>;
+
+  /**
+   * O método que retorna alguns HTTP Header a serem adicionados
+   */
+  private loadHeaders: () => Promise<HttpHeaders>;
+
   //#endregion
 
   //#region Public Methods
+
+  /**
+   * Método que seta uma validação a ser executado antes de cada requisição
+   */
+  public setBeforeValidations(beforeValidation: () => Promise<AsyncResult<any>>): void {
+    this.beforeValidations = beforeValidation;
+  }
+
+  /**
+   * Método que seta uma validação a ser executado antes de cada requisição
+   */
+  public setLoadHeaders(loadHeader: () => Promise<HttpHeaders>): void {
+    this.loadHeaders = loadHeader;
+  }
+
+  /**
+   * Método que retorna o evento chamado ao ocorrer um erro com a chamada API
+   */
+  public getOnAsyncResultError(): Subject<HttpErrorResponse> {
+    return this.onAsyncResultError;
+  }
+
+  //#endregion
+
+  //#region Private Methods
 
   /**
    * Converte um resultado para AsyncResult para quando der certo
    *
    * @param result O resultado obtido
    */
-  public success<T>(result: T): AsyncResult<T> {
+  private success<T>(result: T): AsyncResult<T> {
     return <AsyncResult<T>>{
       success: result
     };
@@ -55,8 +98,8 @@ export class HttpAsync {
    *
    * @param error O erro enviado pelo servidor
    */
-  public error<T>(error: HttpErrorResponse): AsyncResult<T> {
-    console.error(error);
+  private error<T>(error: HttpErrorResponse): AsyncResult<T> {
+    this.onAsyncResultError.next(error);
 
     return <AsyncResult<T>> {
       error: error
@@ -75,7 +118,19 @@ export class HttpAsync {
   public async get<T>(
     url:string
   ): Promise<AsyncResult<T>> {
-    return await this.http.get<T>(this.baseUrl + url).toPromise()
+    if(this.beforeValidations) {
+      const validationResult = await this.beforeValidations();
+
+      if(validationResult.error !== undefined) {
+        this.onAsyncResultError.next(validationResult.error);
+
+        return validationResult;
+      }
+    }
+
+    const headers: { headers: HttpHeaders } = this.loadHeaders != undefined ? { headers: await this.loadHeaders() } : undefined;
+
+    return await this.http.get<T>(this.baseUrl + url, headers).toPromise()
       .then((data: T) => {
         return this.success(data);
       })
@@ -97,7 +152,19 @@ export class HttpAsync {
     url:string,
     payload: object
   ): Promise<AsyncResult<T>> {
-    return await this.http.post<T>(this.baseUrl + url, payload).toPromise()
+    if(this.beforeValidations) {
+      const validationResult = await this.beforeValidations();
+
+      if(validationResult.error !== undefined) {
+        this.onAsyncResultError.next(validationResult.error);
+
+        return validationResult;
+      }
+    }
+
+    const headers: { headers: HttpHeaders } = this.loadHeaders != undefined ? { headers: await this.loadHeaders() } : undefined;
+
+    return await this.http.post<T>(this.baseUrl + url, payload, headers).toPromise()
       .then((data: T) => {
         return this.success(data);
       })
@@ -119,7 +186,19 @@ export class HttpAsync {
     url:string,
     payload: object
   ): Promise<AsyncResult<T>> {
-    return await this.http.put<T>(this.baseUrl + url, payload).toPromise()
+    if(this.beforeValidations) {
+      const validationResult = await this.beforeValidations();
+
+      if(validationResult.error !== undefined) {
+        this.onAsyncResultError.next(validationResult.error);
+
+        return validationResult;
+      }
+    }
+
+    const headers: { headers: HttpHeaders } = this.loadHeaders != undefined ? { headers: await this.loadHeaders() } : undefined;
+
+    return await this.http.put<T>(this.baseUrl + url, payload, headers).toPromise()
       .then((data: T) => {
         return this.success(data);
       })
@@ -139,7 +218,19 @@ export class HttpAsync {
   public async delete<T>(
     url:string
   ): Promise<AsyncResult<T>> {
-    return await this.http.delete<T>(this.baseUrl + url).toPromise()
+    if(this.beforeValidations) {
+      const validationResult = await this.beforeValidations();
+
+      if(validationResult.error !== undefined) {
+        this.onAsyncResultError.next(validationResult.error);
+
+        return validationResult;
+      }
+    }
+
+    const headers: { headers: HttpHeaders } = this.loadHeaders != undefined ? { headers: await this.loadHeaders() } : undefined;
+
+    return await this.http.delete<T>(this.baseUrl + url, headers).toPromise()
       .then((data: T) => {
         return this.success(data);
       })
