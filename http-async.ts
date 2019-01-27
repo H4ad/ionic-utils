@@ -135,7 +135,6 @@ export class HttpAsync {
    * Envia uma requisição com o método DELETE
    *
    * @param url Url para a requisição. Obs: Ele já é automaticamente combinado com a url base
-   * @param payload Informações a serem enviadas para o servidor
    */
   public async delete<T>(
     url:string
