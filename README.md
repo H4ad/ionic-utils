@@ -3,6 +3,14 @@
 Neste repositório há alguns serviços que podem ser adicionados ao seu projeto Ionic/Angular para facilitar a sua vida ao programar.
 
 
+# Indice
+
+
+- [Como usar](#como-usar)
+- [Serviços](#serviços)
+        - [HTTP Async](#http-async)
+        - [HTTP](#http)
+
 # Como usar
 
 Primeiro, faça o copie o código do serviço que deseja usar, crie uma pasta em `/app/services` chamada com o nome do serviço e depois crie um arquivo `.ts` com o mesmo nome da pasta e cole o código ali.
@@ -35,11 +43,13 @@ constructor(
 ) {}
 ~~~~
 
-# HTTP Async
+# Serviços
+
+## HTTP Async
 
 Use esse serviço para realizar requisições assincronas em uma API.
 
-## Exemplos
+### Exemplos
 
 ~~~~
 // o json de resposta
@@ -91,7 +101,7 @@ public async obterLivros(): Promise<Livro[]> {
 
 Use esse serviço para realizar requisições sincronas em uma API.
 
-## Exemplos
+### Exemplos
 
 ~~~~
 // Usarei o mesmo método e interface que o anterior, mas desta vez, ele será sincrono
