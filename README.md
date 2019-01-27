@@ -13,7 +13,7 @@ Neste repositório há alguns serviços que podem ser adicionados ao seu projeto
 
 # Como usar
 
-Primeiro, faça o copie o código do serviço que deseja usar, crie uma pasta em `/app/services` chamada com o nome do serviço e depois crie um arquivo `.ts` com o mesmo nome da pasta e cole o código ali.
+Primeiro,  copie o código do serviço que deseja usar, crie uma pasta em `/app/services` chamada com o nome do serviço e depois crie um arquivo `.ts` com o mesmo nome da pasta e cole o código ali.
 
 Após isso, abra o arquivo `app.module.ts`, e em `providers` adicione o nome do serviço, e ficará assim:
 
@@ -56,6 +56,7 @@ Para facilitar o alguns processos de realizar log e autenticação, é possivel 
 ```typescript
 // app.module.ts
 import { HttpAsync } from '../lugar/do/serviço/http-async.ts';
+import { HttpClient } from '@angular/common/http';
 
 export function httpAsyncFactory = (http: HttpClient) => {
     const httpAsync: HttpAsync = new HttpAsync(http);
