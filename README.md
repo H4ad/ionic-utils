@@ -8,8 +8,8 @@ Neste repositório há alguns serviços que podem ser adicionados ao seu projeto
 
 - [Como usar](#como-usar)
 - [Serviços](#serviços)
-        - [HTTP Async](#http-async)
-        - [HTTP](#http)
+    - [HTTP Async](#http-async)
+    - [HTTP](#http)
 
 # Como usar
 
@@ -56,11 +56,11 @@ Use esse serviço para realizar requisições assincronas em uma API.
 [
   {
     "nome: "Harry Potter, o Cálice de fogo",
-    "autor": "J. K. Rowling" 
+    "autor": "J. K. Rowling"
   },
   {
     "nome: "Harry Potter, e o Prisioneiro de azkaban",
-    "autor": "J. K. Rowling" 
+    "autor": "J. K. Rowling"
   },
 ]
 
@@ -73,7 +73,7 @@ export interface Livro {
    */
   nome: string;
 
-  /** 
+  /**
    * O autor do livro
    */
   autor: string;
@@ -84,15 +84,15 @@ export interface Livro {
 // usando o serviço para obter um json com uma lista de livros
 public async obterLivros(): Promise<Livro[]> {
   const url: string = 'livros'; // O url que será combinado com o url base do HttpAsync.
-  const result: AsyncResult<Livro[]> = await this.http.get<Livro[]>(url); 
+  const result: AsyncResult<Livro[]> = await this.http.get<Livro[]>(url);
   // É necessário informar adicionar uma interface em <> para serializar o resultado.
-  
+
   if(result.error == undefined) // Verifica se não ocorreu nenhum erro.
     return result.success; // Na propriedade success que será contido o resultado da requisição.
 
   console.error(result.error); // Dá um print no console o erro.
   // Trate o seu erro da forma que preferir.
-  
+
   return [];
 }
 ~~~~
@@ -108,21 +108,21 @@ Use esse serviço para realizar requisições sincronas em uma API.
 // usando o serviço para obter um json com uma lista de livros
 public obterLivros(): void {
   const url: string = 'livros'; // O url que será combinado com o url base do HttpAsync.
-  
+
   const onSuccess = (livros: Livro[]) => {
     // Faça o que quiser com os livros.
   };
-  
+
   const onError = (error: HttpErrorResponse) => {
     console.error(error);
     // Trate o erro aqui da forma que preferir.
   };
-  
+
   const onComplete = () => {
     // Independente do que aconteça, ele será executado ao terminar a requisição.
     // É util para, por exemplo, executar o loading.dissmiss(); caso esteja exibindo o Popup de Loading.
   };
-  
+
   this.http.get<Livro[]>(url, onSuccess, onError, onComplete);
 }
 ~~~~
