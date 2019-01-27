@@ -3,6 +3,8 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import { Observer } from 'rxjs';
+
 //#endregion
 
 //#region Class
@@ -122,7 +124,6 @@ export class Http {
   //#endregion
 
 }
-
 
 /**
  * A classe que representa o Observer que lida com as requisições Http
