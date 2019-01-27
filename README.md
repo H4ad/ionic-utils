@@ -17,7 +17,7 @@ Primeiro, faça o copie o código do serviço que deseja usar, crie uma pasta em
 
 Após isso, abra o arquivo `app.module.ts`, e em `providers` adicione o nome do serviço, e ficará assim:
 
-~~~~
+```typescript
 import { HttpAsync } from '../lugar/do/serviço/http-async.ts';
 
 ...
@@ -33,15 +33,15 @@ import { HttpAsync } from '../lugar/do/serviço/http-async.ts';
   ...
 })
 export class AppModule { }
-~~~~
+```
 
 Para usar, adicione a referência do serviço no construtor, dessa forma:
 
-~~~~
+```typescript
 constructor(
   private http: HttpAsync,
 ) {}
-~~~~
+```
 
 # Serviços
 
@@ -53,7 +53,7 @@ Use esse serviço para realizar requisições assincronas em uma API.
 
 Para facilitar o alguns processos de realizar log e autenticação, é possivel configurar algumas validações e ações ao ocorrer um erro. Para isso, você pode usar a propriedade `useFactory` para a criação do `provider` dessa forma:
 
-~~~~
+```typescript
 // app.module.ts
 import { HttpAsync } from '../lugar/do/serviço/http-async.ts';
 
@@ -103,23 +103,25 @@ export function httpAsyncFactory = (http: HttpClient) => {
   ...
 })
 export class AppModule { }
-~~~~
+```
 
 ### Exemplos
 
-~~~~
+```json
 // o json de resposta
 [
   {
-    "nome: "Harry Potter, o Cálice de fogo",
+    "nome": "Harry Potter, o Cálice de fogo",
     "autor": "J. K. Rowling"
   },
   {
-    "nome: "Harry Potter, e o Prisioneiro de azkaban",
+    "nome": "Harry Potter, e o Prisioneiro de azkaban",
     "autor": "J. K. Rowling"
   },
 ]
+```
 
+```typescript
 // a interface livro
 // Nota: Para deserializar os JSONs, eu sempre uso interfaces como modelo, fica mais limpo e organizado.
 export interface Livro {
@@ -136,7 +138,6 @@ export interface Livro {
 
 }
 
-
 // usando o serviço para obter um json com uma lista de livros
 public async obterLivros(): Promise<Livro[]> {
   const url: string = 'livros'; // O url que será combinado com o url base do HttpAsync.
@@ -151,7 +152,7 @@ public async obterLivros(): Promise<Livro[]> {
 
   return [];
 }
-~~~~
+```
 
 ## HTTP
 
@@ -159,7 +160,7 @@ Use esse serviço para realizar requisições sincronas em uma API.
 
 ### Exemplos
 
-~~~~
+```typescript
 // Usarei o mesmo método e interface que o anterior, mas desta vez, ele será sincrono
 // usando o serviço para obter um json com uma lista de livros
 public obterLivros(): void {
@@ -181,4 +182,4 @@ public obterLivros(): void {
 
   this.http.get<Livro[]>(url, onSuccess, onError, onComplete);
 }
-~~~~
+```
