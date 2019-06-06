@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 
 import { Subject } from 'rxjs';
 
+
 //#endregion
 
 //#region Class
@@ -15,7 +16,7 @@ import { Subject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class HttpAsync {
+export class HttpAsyncService {
 
   //#region Construtor
 
@@ -37,7 +38,7 @@ export class HttpAsync {
   /**
    * Url base para realizar as chamadas
    */
-  private readonly baseUrl: string = "API_ENDPOINT";
+  private baseUrl: string = "API_ENDPOINT";
 
   /**
    * O evento emitido ao ocorrer um erro com a requisição
@@ -52,7 +53,7 @@ export class HttpAsync {
   /**
    * O método que retorna alguns HTTP Header a serem adicionados
    */
-  private loadHeaders: () => Promise<HttpHeaders>;
+  private loadHeaders: () => Promise<HttpHeaders | undefined>;
 
   //#endregion
 
@@ -68,7 +69,7 @@ export class HttpAsync {
   /**
    * Método que seta uma validação a ser executado antes de cada requisição
    */
-  public setLoadHeaders(loadHeader: () => Promise<HttpHeaders>): void {
+  public setLoadHeaders(loadHeader: () => Promise<HttpHeaders | undefined>): void {
     this.loadHeaders = loadHeader;
   }
 
@@ -77,6 +78,15 @@ export class HttpAsync {
    */
   public getOnAsyncResultError(): Subject<HttpErrorResponse> {
     return this.onAsyncResultError;
+  }
+
+  /**
+   * Método que define uma nova base de url para as chamadas
+   *
+   * @param newBaseUrl O novo url
+   */
+  public setBaseUrl(newBaseUrl: string): void {
+    this.baseUrl = newBaseUrl;
   }
 
   //#endregion
@@ -107,6 +117,21 @@ export class HttpAsync {
     };
   }
 
+  /**
+   * Método que obtém os headers
+   */
+  private async getHeaders(): Promise<{ headers: HttpHeaders } | undefined> {
+    if (this.loadHeaders === undefined)
+      return undefined;
+
+    const result = await this.loadHeaders();
+
+    if (result === undefined)
+      return undefined;
+
+    return { headers: result };
+  }
+
   //#endregion
 
   //#region Async Restfull Methods
@@ -117,19 +142,16 @@ export class HttpAsync {
    * @param url Url para a requisição. Obs: Ele já é automaticamente combinado com a url base
    */
   public async get<T>(
-    url:string
+      url: string,
   ): Promise<AsyncResult<T>> {
-    if(this.beforeValidations) {
+    if (this.beforeValidations) {
       const validationResult = await this.beforeValidations();
 
-      if(validationResult.error !== undefined) {
-        this.onAsyncResultError.next(validationResult.error);
-
-        return validationResult;
-      }
+      if (validationResult.error !== undefined)
+        return this.error<T>(validationResult.error);
     }
 
-    const headers: { headers: HttpHeaders } = this.loadHeaders != undefined ? { headers: await this.loadHeaders() } : undefined;
+    const headers = await this.getHeaders();
 
     return await this.http.get<T>(this.baseUrl + url, headers).toPromise()
       .then((data: T) => {
@@ -150,20 +172,17 @@ export class HttpAsync {
    * @param payload Informações a serem enviadas para o servidor
    */
   public async post<T>(
-    url:string,
-    payload: object
+      url: string,
+      payload: object,
   ): Promise<AsyncResult<T>> {
-    if(this.beforeValidations) {
+    if (this.beforeValidations) {
       const validationResult = await this.beforeValidations();
 
-      if(validationResult.error !== undefined) {
-        this.onAsyncResultError.next(validationResult.error);
-
-        return validationResult;
-      }
+      if (validationResult.error !== undefined)
+        return this.error<T>(validationResult.error);
     }
 
-    const headers: { headers: HttpHeaders } = this.loadHeaders != undefined ? { headers: await this.loadHeaders() } : undefined;
+    const headers = await this.getHeaders();
 
     return await this.http.post<T>(this.baseUrl + url, payload, headers).toPromise()
       .then((data: T) => {
@@ -184,20 +203,17 @@ export class HttpAsync {
    * @param payload Informações a serem enviadas para o servidor
    */
   public async put<T>(
-    url:string,
-    payload: object
+      url: string,
+      payload: object,
   ): Promise<AsyncResult<T>> {
-    if(this.beforeValidations) {
+    if (this.beforeValidations) {
       const validationResult = await this.beforeValidations();
 
-      if(validationResult.error !== undefined) {
-        this.onAsyncResultError.next(validationResult.error);
-
-        return validationResult;
-      }
+      if (validationResult.error !== undefined)
+        return this.error<T>(validationResult.error);
     }
 
-    const headers: { headers: HttpHeaders } = this.loadHeaders != undefined ? { headers: await this.loadHeaders() } : undefined;
+    const headers = await this.getHeaders();
 
     return await this.http.put<T>(this.baseUrl + url, payload, headers).toPromise()
       .then((data: T) => {
@@ -211,25 +227,22 @@ export class HttpAsync {
       });
   }
 
-/**
+  /**
    * Envia uma requisição com o método DELETE
    *
    * @param url Url para a requisição. Obs: Ele já é automaticamente combinado com a url base
    */
   public async delete<T>(
-    url:string
+      url: string,
   ): Promise<AsyncResult<T>> {
-    if(this.beforeValidations) {
+    if (this.beforeValidations) {
       const validationResult = await this.beforeValidations();
 
-      if(validationResult.error !== undefined) {
-        this.onAsyncResultError.next(validationResult.error);
-
-        return validationResult;
-      }
+      if (validationResult.error !== undefined)
+        return this.error<T>(validationResult.error);
     }
 
-    const headers: { headers: HttpHeaders } = this.loadHeaders != undefined ? { headers: await this.loadHeaders() } : undefined;
+    const headers = await this.getHeaders();
 
     return await this.http.delete<T>(this.baseUrl + url, headers).toPromise()
       .then((data: T) => {
