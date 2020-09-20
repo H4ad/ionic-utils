@@ -6,13 +6,17 @@ Neste repositório há alguns serviços que podem ser adicionados ao seu projeto
 
 Abaixo, as informações dos módulos disponíveis nesse projeto para você poder utilizar.
 
-### Http Async
+## Exemplo
 
-Para utilizar esse cara, basta copiar a pasta em `src/modules/http-async`, 
+Para ver esses serviços funcionando, basta rodar o `ng serve`.
+
+## Http Async
+
+Para utilizar esse cara, basta copiar a pasta em `src/app/modules/http-async`, 
 e com ele você pode fazer requisições HTTP com um BaseUrl, Headers e 
 até o Authorization Header configurado e setado, tudo usando os `interceptors`.
 
-#### Como usar
+### Como usar
 
 Para usar, importe o módulo da seguinte forma:
 ```typescript
@@ -51,7 +55,7 @@ diferente para cada instância.
 
 ## Network
 
-Para utilizar esse cara, basta copiar a pasta em `src/modules/network`, 
+Para utilizar esse cara, basta copiar a pasta em `src/app/modules/network`, 
 e com ele você pode verificar se está conectado a internet, e até 
 setar um `Interceptor` para verificar se há internet, e se não houver,
 lançar uma exceção por conta disso.
